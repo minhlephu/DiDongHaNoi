@@ -1,0 +1,31 @@
+﻿@model DiDongHaNoi.Models.Role
+
+@{
+    ViewData["Title"] = "Thông tin quyền quản trị";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Thông tin quyền quản trị</h4>
+        <div class="table-responsive">
+            <table class="product-info-table m-t-20">
+                <tbody>
+                    <tr>
+                        <td>ID:</td>
+                        <td class="text-dark font-weight-semibold">@Model.RoleId</td>
+                    </tr>
+                    <tr>
+                        <td>Tên quyền truy cập</td>
+                        <td>@Model.RoleName</td>
+                    </tr>
+                    <tr>
+                        <td>Mô tả:</td>
+                        <td>@Model.Description</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
