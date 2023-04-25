@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DiDongHaNoi.Models;
+using AspNetCoreHero.ToastNotification.Abstractions;
 
 namespace DiDongHaNoi.Areas.Admin.Controllers
 {
@@ -13,6 +14,7 @@ namespace DiDongHaNoi.Areas.Admin.Controllers
     public class AdminRolesController : Controller
     {
         private readonly QlbanDienThoaiContext _context;
+        public INotyfService _notifyService { get; }
 
         public AdminRolesController(QlbanDienThoaiContext context)
         {
@@ -101,11 +103,13 @@ namespace DiDongHaNoi.Areas.Admin.Controllers
                 {
                     _context.Update(role);
                     await _context.SaveChangesAsync();
+                    _notifyService.Success("Cập nhật thành công");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!RoleExists(role.RoleId))
                     {
+                        _notifyService.Success("Có lỗi xảy ra");
                         return NotFound();
                     }
                     else
