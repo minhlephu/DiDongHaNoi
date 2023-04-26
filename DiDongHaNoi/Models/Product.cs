@@ -43,7 +43,7 @@ public partial class Product
 
     public string? MetaKey { get; set; }
 
-    public int? UnitslnStock { get; set; }
+    public int? UnitsInStock { get; set; }
 
     public virtual Category? Cat { get; set; }
 }

@@ -1,5 +1,5 @@
-﻿@using X.PagedList.Mvc.Core
-@model X.PagedList.IPagedList<Customer>
+﻿@using PagedList.Core.Mvc
+@model PagedList.Core.IPagedList<DiDongHaNoi.Models.Customer>
 @{
     int CurrentPage = ViewBag.CurrentPage;
     ViewData["Title"] = "Danh sách khách hàng" + CurrentPage;
@@ -82,10 +82,11 @@
                     }
                 </tbody>
             </table>
-            @Html.PagedListPager(Model,page => Url.Action("", new {page=page}),new X.PagedList.Web.Common.PagedListRenderOptions(){
-            LiElementClasses = new List<String> {"page-item"},
-            PageClasses = new List<String> {"page-link"}
-            })
+            <div aria-label="Page navigation example">
+                <ul class="pagination">
+                    <pager class="pager-container" list="@Model" asp-area="Admin" asp-controller="AdminCustomers" asp-action="Index" />
+                </ul>
+            </div>
         </div>
     </div>
 </div>

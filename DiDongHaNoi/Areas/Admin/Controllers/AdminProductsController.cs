@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DiDongHaNoi.Models;
-using X.PagedList;
+using PagedList.Core;
+using AspNetCoreHero.ToastNotification.Abstractions;
+using DiDongHaNoi.Helpper;
 
 namespace DiDongHaNoi.Areas.Admin.Controllers
 {
@@ -14,29 +16,43 @@ namespace DiDongHaNoi.Areas.Admin.Controllers
     public class AdminProductsController : Controller
     {
         private readonly QlbanDienThoaiContext _context;
-
-        public AdminProductsController(QlbanDienThoaiContext context)
+        public INotyfService _notyfService { get; }
+        public AdminProductsController(QlbanDienThoaiContext context, INotyfService notyfService)
         {
             _context = context;
+            _notyfService = notyfService;
         }
 
         // GET: Admin/AdminProducts
-        public async Task<IActionResult> Index(int page=1,int CatID=0)
+        public IActionResult Index(int page = 1, int CatID = 0)
         {
             var pageNumber = page;
             var pageSize = 20;
+
             List<Product> lsProducts = new List<Product>();
             if (CatID != 0)
             {
-                lsProducts = _context.Products.AsNoTracking().Where(x=>x.CatId==CatID).Include(x => x.Cat).OrderByDescending(x => x.ProductId).ToList();
+                lsProducts = _context.Products
+                .AsNoTracking()
+                .Where(x => x.CatId == CatID)
+                .Include(x => x.Cat)
+                .OrderBy(x => x.ProductId).ToList();
             }
             else
             {
-                lsProducts = _context.Products.AsNoTracking().Include(x => x.Cat).OrderByDescending(x => x.ProductId).ToList();
+                lsProducts = _context.Products
+                .AsNoTracking()
+                .Include(x => x.Cat)
+                .OrderBy(x => x.ProductId).ToList();
             }
+
+
+
             PagedList<Product> models = new PagedList<Product>(lsProducts.AsQueryable(), pageNumber, pageSize);
             ViewBag.CurrentCateID = CatID;
+
             ViewBag.CurrentPage = pageNumber;
+
             ViewData["DanhMuc"] = new SelectList(_context.Categories, "CatId", "CatName");
 
             return View(models);
@@ -81,12 +97,25 @@ namespace DiDongHaNoi.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductId,ProductName,ShortDesc,Description,CatId,Price,Discount,Thumb,Video,DateCreated,DateModified,BestSellers,HomeFlag,Active,Tags,Title,Alias,MetaDesc,MetaKey,UnitslnStock")] Product product)
+        public async Task<IActionResult> Create([Bind("ProductId,ProductName,ShortDesc,Description,CatId,Price,Discount,Thumb,Video,DateCreated,DateModified,BestSellers,HomeFlag,Active,Tags,Title,Alias,MetaDesc,MetaKey,UnitsInStock")] Product product, Microsoft.AspNetCore.Http.IFormFile fThumb)
         {
             if (ModelState.IsValid)
             {
+                product.ProductName = Utilities.ToTitleCase(product.ProductName);
+                if (fThumb != null)
+                {
+                    string extension = Path.GetExtension(fThumb.FileName);
+                    string image = Utilities.SEOUrl(product.ProductName) + extension;
+                    product.Thumb = await Utilities.UploadFile(fThumb, @"products", image.ToLower());
+                }
+                if (string.IsNullOrEmpty(product.Thumb)) product.Thumb = "default.jpg";
+                product.Alias = Utilities.SEOUrl(product.ProductName);
+                product.DateModified = DateTime.Now;
+                product.DateCreated = DateTime.Now;
+
                 _context.Add(product);
                 await _context.SaveChangesAsync();
+                _notyfService.Success("Thêm mới thành công");
                 return RedirectToAction(nameof(Index));
             }
             ViewData["DanhMuc"] = new SelectList(_context.Categories, "CatId", "CatName", product.CatId);

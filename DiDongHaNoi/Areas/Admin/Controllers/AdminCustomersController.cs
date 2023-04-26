@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DiDongHaNoi.Models;
-using X.PagedList;
+using PagedList.Core;
 
 namespace DiDongHaNoi.Areas.Admin.Controllers
 {
@@ -21,12 +21,15 @@ namespace DiDongHaNoi.Areas.Admin.Controllers
         }
 
         // GET: Admin/AdminCustomers
-        public async Task<IActionResult> Index(int? page)
+        public IActionResult Index(int? page)
         {
             var pageNumber = page == null || page <= 0 ? 1 : page.Value;
             var pageSize = 20;
-            var lsCustomers = _context.Customers.AsNoTracking().Include(x=>x.Location).OrderByDescending(x => x.CreateDate);
+            var lsCustomers = _context.Customers
+                .AsNoTracking()
+                .OrderByDescending(x => x.CreateDate);
             PagedList<Customer> models = new PagedList<Customer>(lsCustomers, pageNumber, pageSize);
+
             ViewBag.CurrentPage = pageNumber;
             return View(models);
         }
