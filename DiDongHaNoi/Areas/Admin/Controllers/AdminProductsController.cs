@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DiDongHaNoi.Models;
+using X.PagedList;
 
 namespace DiDongHaNoi.Areas.Admin.Controllers
 {
@@ -20,12 +21,35 @@ namespace DiDongHaNoi.Areas.Admin.Controllers
         }
 
         // GET: Admin/AdminProducts
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page=1,int CatID=0)
         {
-            var qlbanDienThoaiContext = _context.Products.Include(p => p.Cat);
-            return View(await qlbanDienThoaiContext.ToListAsync());
-        }
+            var pageNumber = page;
+            var pageSize = 20;
+            List<Product> lsProducts = new List<Product>();
+            if (CatID != 0)
+            {
+                lsProducts = _context.Products.AsNoTracking().Where(x=>x.CatId==CatID).Include(x => x.Cat).OrderByDescending(x => x.ProductId).ToList();
+            }
+            else
+            {
+                lsProducts = _context.Products.AsNoTracking().Include(x => x.Cat).OrderByDescending(x => x.ProductId).ToList();
+            }
+            PagedList<Product> models = new PagedList<Product>(lsProducts.AsQueryable(), pageNumber, pageSize);
+            ViewBag.CurrentCateID = CatID;
+            ViewBag.CurrentPage = pageNumber;
+            ViewData["DanhMuc"] = new SelectList(_context.Categories, "CatId", "CatName");
 
+            return View(models);
+        }
+        public IActionResult Filtter(int CatID = 0)
+        {
+            var url = $"/Admin/AdminProducts?CatID={CatID}";
+            if (CatID == 0)
+            {
+                url = $"/Admin/AdminProducts";
+            }
+            return Json(new { status = "success", redirectUrl = url });
+        }
         // GET: Admin/AdminProducts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -48,7 +72,7 @@ namespace DiDongHaNoi.Areas.Admin.Controllers
         // GET: Admin/AdminProducts/Create
         public IActionResult Create()
         {
-            ViewData["CatId"] = new SelectList(_context.Categories, "CatId", "CatId");
+            ViewData["DanhMuc"] = new SelectList(_context.Categories, "CatId", "CatName");
             return View();
         }
 
@@ -65,7 +89,7 @@ namespace DiDongHaNoi.Areas.Admin.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CatId"] = new SelectList(_context.Categories, "CatId", "CatId", product.CatId);
+            ViewData["DanhMuc"] = new SelectList(_context.Categories, "CatId", "CatName", product.CatId);
             return View(product);
         }
 
@@ -82,7 +106,7 @@ namespace DiDongHaNoi.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            ViewData["CatId"] = new SelectList(_context.Categories, "CatId", "CatId", product.CatId);
+            ViewData["DanhMuc"] = new SelectList(_context.Categories, "CatId", "CatName", product.CatId);
             return View(product);
         }
 
@@ -118,7 +142,7 @@ namespace DiDongHaNoi.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CatId"] = new SelectList(_context.Categories, "CatId", "CatId", product.CatId);
+            ViewData["DanhMuc"] = new SelectList(_context.Categories, "CatId", "CatName", product.CatId);
             return View(product);
         }
 
