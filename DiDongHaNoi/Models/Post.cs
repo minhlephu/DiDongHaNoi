@@ -17,6 +17,10 @@ public partial class Post
 
     public bool Published { get; set; }
 
+    public bool IsNewFeed { get; set; }
+
+    public bool IsHot { get; set; }
+
     public string? Alias { get; set; }
 
     public DateTime? CreateDate { get; set; }
@@ -25,13 +29,9 @@ public partial class Post
 
     public int? AccountId { get; set; }
 
+    public int? CatId { get; set; }
+
     public string? Tags { get; set; }
-
-    public int? CartId { get; set; }
-
-    public bool? IsHot { get; set; }
-
-    public bool? IsNewFeed { get; set; }
 
     public string? MetaDesc { get; set; }
 

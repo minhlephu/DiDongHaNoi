@@ -186,24 +186,22 @@ public partial class QlbanDienThoaiContext : DbContext
 
         modelBuilder.Entity<Post>(entity =>
         {
-            entity.Property(e => e.PostId)
-                .ValueGeneratedNever()
-                .HasColumnName("PostID");
+            entity.Property(e => e.PostId).HasColumnName("PostID");
             entity.Property(e => e.AccountId).HasColumnName("AccountID");
-            entity.Property(e => e.Alias).HasMaxLength(255);
-            entity.Property(e => e.Author).HasMaxLength(255);
-            entity.Property(e => e.CartId).HasColumnName("CartID");
-            entity.Property(e => e.Contents).HasMaxLength(255);
+            entity.Property(e => e.Alias).HasMaxLength(50);
+            entity.Property(e => e.Author).HasMaxLength(50);
+            entity.Property(e => e.CatId).HasColumnName("CatID");
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.IsHot).HasColumnName("isHot");
             entity.Property(e => e.IsNewFeed).HasColumnName("isNewFeed");
-            entity.Property(e => e.MetaDesc).HasMaxLength(255);
-            entity.Property(e => e.MetaKey).HasMaxLength(255);
+            entity.Property(e => e.MetaDesc).HasMaxLength(50);
+            entity.Property(e => e.MetaKey).HasMaxLength(50);
             entity.Property(e => e.Scontents)
-                .HasMaxLength(255)
+                .HasMaxLength(50)
                 .HasColumnName("SContents");
+            entity.Property(e => e.Tags).HasMaxLength(50);
             entity.Property(e => e.Thumb).HasMaxLength(50);
-            entity.Property(e => e.Title).HasMaxLength(255);
+            entity.Property(e => e.Title).HasMaxLength(50);
         });
 
         modelBuilder.Entity<Product>(entity =>
