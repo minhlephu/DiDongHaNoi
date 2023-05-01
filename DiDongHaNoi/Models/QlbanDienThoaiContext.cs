@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using DiDongHaNoi.ModelViews;
 
 namespace DiDongHaNoi.Models;
 
@@ -258,4 +259,8 @@ public partial class QlbanDienThoaiContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+    public DbSet<DiDongHaNoi.ModelViews.RegisterViewModel>? RegisterViewModel { get; set; }
+
+    public DbSet<DiDongHaNoi.ModelViews.LoginViewModel>? LoginViewModel { get; set; }
 }
