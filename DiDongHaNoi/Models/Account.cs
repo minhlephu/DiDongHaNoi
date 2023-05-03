@@ -23,5 +23,7 @@ public partial class Account
 
     public DateTime? CreateDate { get; set; }
 
+    public string? Password { get; set; }
+
     public virtual Role? Role { get; set; }
 }

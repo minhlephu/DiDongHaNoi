@@ -1,7 +1,7 @@
 ﻿using System;
 using DiDongHaNoi.Models;
 
-namespace WebShop.ModelViews
+namespace DiDongHaNoi.ModelViews
 {
     public class CartItem
     {

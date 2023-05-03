@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using DiDongHaNoi.ModelViews;
 
 namespace DiDongHaNoi.Models;
 
@@ -59,6 +58,7 @@ public partial class QlbanDienThoaiContext : DbContext
             entity.Property(e => e.Email).HasMaxLength(50);
             entity.Property(e => e.FullName).HasMaxLength(50);
             entity.Property(e => e.LastLogin).HasColumnType("datetime");
+            entity.Property(e => e.Password).HasMaxLength(50);
             entity.Property(e => e.Phone)
                 .HasMaxLength(50)
                 .IsUnicode(false);
@@ -145,6 +145,7 @@ public partial class QlbanDienThoaiContext : DbContext
         modelBuilder.Entity<Order>(entity =>
         {
             entity.Property(e => e.OrderId).HasColumnName("OrderID");
+            entity.Property(e => e.Address).HasMaxLength(255);
             entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
             entity.Property(e => e.OrderDate).HasColumnType("datetime");
             entity.Property(e => e.PaymentDate).HasColumnType("datetime");
@@ -164,6 +165,7 @@ public partial class QlbanDienThoaiContext : DbContext
         modelBuilder.Entity<OrderDetail>(entity =>
         {
             entity.Property(e => e.OrderDetailId).HasColumnName("OrderDetailID");
+            entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.OrderId).HasColumnName("OrderID");
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.ShipDate).HasColumnType("datetime");
@@ -171,6 +173,10 @@ public partial class QlbanDienThoaiContext : DbContext
             entity.HasOne(d => d.Order).WithMany(p => p.OrderDetails)
                 .HasForeignKey(d => d.OrderId)
                 .HasConstraintName("FK_OrderDetails_Orders");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.OrderDetails)
+                .HasForeignKey(d => d.ProductId)
+                .HasConstraintName("FK_OrderDetails_Products");
         });
 
         modelBuilder.Entity<Page>(entity =>
@@ -189,7 +195,6 @@ public partial class QlbanDienThoaiContext : DbContext
         {
             entity.Property(e => e.PostId).HasColumnName("PostID");
             entity.Property(e => e.AccountId).HasColumnName("AccountID");
-            entity.Property(e => e.Alias).HasMaxLength(50);
             entity.Property(e => e.Author).HasMaxLength(50);
             entity.Property(e => e.CatId).HasColumnName("CatID");
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
@@ -197,12 +202,8 @@ public partial class QlbanDienThoaiContext : DbContext
             entity.Property(e => e.IsNewFeed).HasColumnName("isNewFeed");
             entity.Property(e => e.MetaDesc).HasMaxLength(50);
             entity.Property(e => e.MetaKey).HasMaxLength(50);
-            entity.Property(e => e.Scontents)
-                .HasMaxLength(50)
-                .HasColumnName("SContents");
+            entity.Property(e => e.Scontents).HasColumnName("SContents");
             entity.Property(e => e.Tags).HasMaxLength(50);
-            entity.Property(e => e.Thumb).HasMaxLength(50);
-            entity.Property(e => e.Title).HasMaxLength(50);
         });
 
         modelBuilder.Entity<Product>(entity =>
@@ -215,7 +216,6 @@ public partial class QlbanDienThoaiContext : DbContext
             entity.Property(e => e.MetaDesc).HasMaxLength(255);
             entity.Property(e => e.MetaKey).HasMaxLength(255);
             entity.Property(e => e.ProductName).HasMaxLength(255);
-            entity.Property(e => e.ShortDesc).HasMaxLength(255);
             entity.Property(e => e.Thumb).HasMaxLength(255);
             entity.Property(e => e.Title).HasMaxLength(255);
             entity.Property(e => e.Video).HasMaxLength(255);
@@ -259,8 +259,4 @@ public partial class QlbanDienThoaiContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
-
-    public DbSet<DiDongHaNoi.ModelViews.RegisterViewModel>? RegisterViewModel { get; set; }
-
-    public DbSet<DiDongHaNoi.ModelViews.LoginViewModel>? LoginViewModel { get; set; }
 }
