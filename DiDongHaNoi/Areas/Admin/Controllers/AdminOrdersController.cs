@@ -68,6 +68,7 @@ namespace DiDongHaNoi.Areas.Admin.Controllers
                 .Where(x => x.OrderId == order.OrderId)
                 .OrderBy(x => x.OrderDetailId)
                 .ToList();
+            
             ViewBag.ChiTiet = Chitietdonhang;
             return View(order);
         }
